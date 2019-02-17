@@ -22,13 +22,12 @@ def detect_research():
     global SCTech, SCUpgr, BWTech, BWUpgr
     for i in mapdata.human:
         RawTrigger(
-            # [35] Unknown Tech35
+            # [18] Burst Lasers
             conditions=[
-                Research(i, BWTech, 35, Exactly, 1),
+                Research(i, SCUpgr, 18, Exactly, 1),
                 Memory(spider_mines + 4 * i, Exactly, 0),
             ],
             actions=[
-                SetResearch(i, BWTech, 35, Subtract, 1),
                 # [3] Spider Mines
                 SetResearch(i, SCTech, 3, Add, 1),
                 SetMemory(spider_mines + 4 * i, Add, 1),
@@ -43,7 +42,7 @@ def detect_research():
         spider_mines_Lv2 << RawTrigger(
             nextptr=loopend,
             conditions=[
-                Research(i, BWTech, 35, Exactly, 1),
+                Research(i, SCUpgr, 18, Exactly, 2),
                 Memory(spider_mines + 4 * i, Exactly, 1),
             ],
             actions=[

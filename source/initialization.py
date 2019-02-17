@@ -11,17 +11,28 @@ def main():
     DoActions([
         # 스카웃 디텍터 추가
         SetMemory(0x664198, Add, 32768),
-        # 머신 샵의 Spider Mines 버튼 액션을 Unknown Tech35로
-        SetMemory(0x5186F0, Add, 2097152),
-        # Unknown Tech35를 Spider Mines처럼 수정
-		SetMemory(0x656234, SetTo, 6553600),
-		SetMemory(0x65628C, SetTo, 6553600),
-		SetMemory(0x6562E4, SetTo, 20710618),
-		SetMemory(0x6563C4, SetTo, 1),
-		SetMemory(0x65641C, SetTo, 78643200),
-		SetMemory(0x656474, SetTo, 15925613),
-		SetMemory(0x6564A8, SetTo, 16843520),
-		SetMemory(0x6564D4, SetTo, 65793),
+        # 머신샵 Spider Mines 테크 대신 [18] Burst Lasers 업그레이드 사용
+        SetMemory(0x5186E8, SetTo, 4363344),
+        SetMemory(0x5186EC, SetTo, 4338448),
+        SetMemory(0x5186F0, SetTo, 1179666),
+        # Burst Lasers 업그레이드 아이콘, 이름 변경
+        SetMemory(0x655AE4, Add, 4),
+        SetMemory(0x655A64, Subtract, 113),
+        # Burst Lasers 업그레이드 비용, 시간 변경
+        SetMemory(0x655764, Subtract, 100),
+        SetMemory(0x655864, Subtract, 100),
+        SetMemory(0x655BA4, Subtract, 1000),
+        # Burst Lasers 업그레이드 요구사항 변경
+        SetMemory(0x6558E4, SetTo, 15270115),
+        # Burst Lasers 업그레이드 단계 변경
+        SetMemory(0x58D088 + 0 * 46 + 18, Add, 2 * 65536),
+        SetMemory(0x58D088 + 1 * 46 + 18, Add, 2),
+        SetMemory(0x58D088 + 2 * 46 + 18, Add, 2 * 65536),
+        SetMemory(0x58D088 + 3 * 46 + 18, Add, 2),
+        SetMemory(0x58D088 + 4 * 46 + 18, Add, 2 * 65536),
+        SetMemory(0x58D088 + 5 * 46 + 18, Add, 2),
+        SetMemory(0x58D088 + 6 * 46 + 18, Add, 2 * 65536),
+        SetMemory(0x58D088 + 7 * 46 + 18, Add, 2),
     ])
     # 히드라리스크 체력을 75로 하향, 방어력을 1로 상향.
     SetUnitSettings("Zerg Hydralisk", "hit points", 75)
