@@ -1,0 +1,5 @@
+[main]
+input:  basemap/(4)CircuitBreakers1.0.scx
+output: (4)CircuitBreakers1.0_PBP.scx
+
+[source/main.py]
