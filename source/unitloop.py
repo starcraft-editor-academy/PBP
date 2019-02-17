@@ -8,25 +8,20 @@ import upgrade
 
 def main():
     for ptr, epd in LoopNewUnit(31):
-        # 마인 2개
         unit_type = epd + 0x64 // 4
         if EUDIf()(
             MemoryEPD(unit_type, Exactly,
-                        EncodeUnit("Terran Vulture"))
+                      EncodeUnit("Terran Vulture"))
         ):
             spider_mine_count = epd + 0xC0 // 4
             EUDContinueIfNot(
                 MemoryXEPD(spider_mine_count, Exactly, 3, 0xFF)
             )
             player = f_bread_epd(epd + 0x4C // 4, 0)
-            if EUDIfNot()([
-                MemoryEPD(EPD(upgrade.ion_thrusters) + player, Exactly, 1),
-                MemoryEPD(EPD(upgrade.spider_mines) + player, Exactly, 1),
-            ]):
-                DoActions([
-                    SetMemoryEPD(spider_mine_count, Subtract, 1)
-                ])
-            EUDEndIf()
+            Trigger(
+                conditions=MemoryEPD(EPD(upgrade.spider_mines) + player, AtMost, 1),
+                actions=SetMemoryEPD(spider_mine_count, Subtract, 1),
+            )
         EUDEndIf()
 
     for ptr, epd in EUDLoopUnit2():
