@@ -25,6 +25,8 @@ def afterTriggerExec():
     DoActions([
         # eudTurbo
         SetMemory(0x6509A0, SetTo, 0),
+        # Unknown Tech35의 기술연구 요구사항을 Spider Mines처럼
+        SetMemory(0x6561DC, SetTo, 917504),
     ])
 
 
