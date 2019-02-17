@@ -1,5 +1,0 @@
-[main]
-input:  basemap/투혼.scx
-output: 투혼_PBP.scx
-
-[source/main.py]
