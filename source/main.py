@@ -23,6 +23,8 @@ def beforeTriggerExec():
 def afterTriggerExec():
     unitloop.main()
     DoActions([
+        # [18] Burst Lasers (Unused)의 요구사항을 [17] Ion Thrusters와 같도록 변경
+        SetMemoryX(0x6558C0 + 18 * 2, SetTo, 227, 0xFFFF),
         # eudTurbo
         SetMemory(0x6509A0, SetTo, 0),
     ])
