@@ -38,7 +38,7 @@ def edit_map_title_and_description():
     title = strmap.GetString(title_strid)
     desc = strmap.GetString(desc_strid)
 
-    title = GetStringIndex(title + u2b(" \x06PBP v%.1f" % VERSION))
+    title = GetStringIndex(title + u2b(" \x06PBP %.1f" % VERSION))
     desc = GetStringIndex(desc + u2b("\nEdited by EDAC https://cafe.naver.com/edac"))
     SPRP = i2b2(title) + i2b2(desc)
     chkt.setsection("SPRP", SPRP)
