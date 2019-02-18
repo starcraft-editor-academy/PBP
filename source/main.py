@@ -4,6 +4,7 @@
 from eudplib import *
 
 import initialization
+import mapdata
 import unitloop
 import upgrade
 
@@ -31,7 +32,7 @@ def afterTriggerExec():
 
 
 def edit_map_title_and_description():
-    chkt = initialization.chkt
+    chkt = mapdata.chkt
     SPRP = chkt.getsection("SPRP")
     strmap = TBL(chkt.getsection("STR"))
 
