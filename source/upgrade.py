@@ -5,131 +5,10 @@ from eudplib import *
 
 import mapdata
 
-tech_dict = {
-    "Stim Packs": 0,
-	"Lockdown": 1,
-	"EMP Shockwave": 2,
-	"Spider Mines": 3,
-	"Scanner Sweep": 4,
-	"Siege Mode": 5,
-	"Defensive Matrix": 6,
-	"Irradiate": 7,
-	"Yamato Gun": 8,
-	"Cloaking Field": 9,
-	"Personnel Cloaking": 10,
-	"Burrowing": 11,
-	"Infestation": 12,
-	"Spawn Broodling": 13,
-	"Dark Swarm": 14,
-	"Plague": 15,
-	"Consume": 16,
-	"Ensnare": 17,
-	"Parasite": 18,
-	"Psionic Storm": 19,
-	"Hallucination": 20,
-	"Recall": 21,
-	"Stasis Field": 22,
-	"Archon Warp": 23,
-	"Restoration": 24,
-	"Disruption Web": 25,
-	"Unknown Tech26": 26,
-	"Mind Control": 27,
-	"Dark Archon Meld": 28,
-	"Feedback": 29,
-	"Optical Flare": 30,
-	"Maelstorm": 31,
-	"Lurker Aspect": 32,
-	"Unknown Tech33": 33,
-	"Healing": 34,
-	"Unknown Tech35": 35,
-	"Unknown Tech36": 36,
-	"Unknown Tech37": 37,
-	"Unknown Tech38": 38,
-	"Unknown Tech39": 39,
-	"Unknown Tech40": 40,
-	"Unknown Tech41": 41,
-	"Unknown Tech42": 42,
-	"Unknown Tech43": 43,
-}
-upgrade_dict = {
-	"Terran Infantry Armor": 0,
-	"Terran Vehicle Plating": 1,
-	"Terran Ship Plating": 2,
-	"Zerg Carapace": 3,
-	"Zerg Flyer Caparace": 4,
-	"Protoss Armor": 5,
-	"Protoss Plating": 6,
-	"Terran Infantry Weapons": 7,
-	"Terran Vehicle Weapons": 8,
-	"Terran Ship Weapons": 9,
-	"Zerg Melee Attacks": 10,
-	"Zerg Missile Attacks": 11,
-	"Zerg Flyer Attacks": 12,
-	"Protoss Ground Weapons": 13,
-	"Protoss Air Weapons": 14,
-	"Protoss Plasma Shields": 15,
-	"U-238 Shells": 16,
-	"Ion Thrusters": 17,
-	"Burst Lasers (Unused)": 18,
-	"Titan Reactor (SV +50)": 19,
-	"Ocular Implants": 20,
-	"Moebius Reactor (Ghost +50)": 21,
-	"Apollo Reactor (Wraith +50)": 22,
-	"Colossus Reactor (BC +50)": 23,
-	"Ventral Sacs": 24,
-	"Antennae": 25,
-	"Pneumatized Carapace": 26,
-	"Metabolic Boost": 27,
-	"Adrenal Glands": 28,
-	"Muscular Augments": 29,
-	"Grooved Spines": 30,
-	"Gamete Meiosis (Queen +50)": 31,
-	"Metasynaptic Node (Defiler +50)": 32,
-	"Singularity Charge": 33,
-	"Leg Enhancements": 34,
-	"Scarab Damage": 35,
-	"Reaver Capacity": 36,
-	"Gravitic Drive": 37,
-	"Sensor Array": 38,
-	"Gravitic Boosters": 39,
-	"Khaydarin Amulet (HT +50)": 40,
-	"Apial Sensors": 41,
-	"Gravitic Thrusters": 42,
-	"Carrier Capacity": 43,
-	"Khaydarin Core (Arbiter +50)": 44,
-	"Unknown Upgrade45": 45,
-	"Unknown Upgrade46": 46,
-	"Argus Jewel (Corsair +50)": 47,
-	"Unknown Upgrade48": 48,
-	"Argus Talisman (DA +50)": 49,
-	"Unknown Upgrade50": 50,
-	"Caduceus Reactor (Medic +50)": 51,
-	"Chitinous Plating": 52,
-	"Anabolic Synthesis": 53,
-	"Charon Booster": 54,
-	"Unknown Upgrade55": 55,
-	"Unknown Upgrade56": 56,
-	"Unknown Upgrade57": 57,
-	"Unknown Upgrade58": 58,
-	"Unknown Upgrade59": 59,
-	"Unknown Upgrade60": 60,
-}
-
-SCTech = None
-SCUpgr = None
-BWTech = None
-BWUpgr = None
-
-
-class BaseUpgrade:
-    pass
-
-
 spider_mines  = EUDArray(8)
 
 
 def detect_research():
-    global SCTech, SCUpgr, BWTech, BWUpgr
     for p in mapdata.human:
         RawTrigger(
             conditions=[
@@ -169,13 +48,10 @@ def detect_research():
                           EncodeUnit("Terran Vulture")),
             ]):
                 spider_mine_count = epd + 0xC0 // 4
-                if EUDIf()([
-                    MemoryEPD(spider_mine_count, AtMost, 2),
-                ]):
-                    DoActions([
-                        SetMemoryEPD(spider_mine_count, Add, 1),
-                    ])
-                EUDEndIf()
+                Trigger(
+                    conditions=MemoryEPD(spider_mine_count, AtMost, 2),
+                    actions=SetMemoryEPD(spider_mine_count, Add, 1),
+                )
             EUDEndIf()
         RawTrigger(
             nextptr=loopend,
@@ -198,6 +74,126 @@ def SetResearch(player, upgrade, modifier, value):
     offset = category.Researched + player * category.length + upgrade_id
     multiplier = 256 ** (offset % 4)
     return SetMemoryX(offset, modifier, value * multiplier, 255 * multiplier)
+
+
+class BaseUpgrade:
+    pass
+
+
+SCTech = None
+SCUpgr = None
+BWTech = None
+BWUpgr = None
+
+tech_dict = {
+    "Stim Packs": 0,
+    "Lockdown": 1,
+    "EMP Shockwave": 2,
+    "Spider Mines": 3,
+    "Scanner Sweep": 4,
+    "Siege Mode": 5,
+    "Defensive Matrix": 6,
+    "Irradiate": 7,
+    "Yamato Gun": 8,
+    "Cloaking Field": 9,
+    "Personnel Cloaking": 10,
+    "Burrowing": 11,
+    "Infestation": 12,
+    "Spawn Broodling": 13,
+    "Dark Swarm": 14,
+    "Plague": 15,
+    "Consume": 16,
+    "Ensnare": 17,
+    "Parasite": 18,
+    "Psionic Storm": 19,
+    "Hallucination": 20,
+    "Recall": 21,
+    "Stasis Field": 22,
+    "Archon Warp": 23,
+    "Restoration": 24,
+    "Disruption Web": 25,
+    "Unknown Tech26": 26,
+    "Mind Control": 27,
+    "Dark Archon Meld": 28,
+    "Feedback": 29,
+    "Optical Flare": 30,
+    "Maelstorm": 31,
+    "Lurker Aspect": 32,
+    "Unknown Tech33": 33,
+    "Healing": 34,
+    "Unknown Tech35": 35,
+    "Unknown Tech36": 36,
+    "Unknown Tech37": 37,
+    "Unknown Tech38": 38,
+    "Unknown Tech39": 39,
+    "Unknown Tech40": 40,
+    "Unknown Tech41": 41,
+    "Unknown Tech42": 42,
+    "Unknown Tech43": 43,
+}
+upgrade_dict = {
+    "Terran Infantry Armor": 0,
+    "Terran Vehicle Plating": 1,
+    "Terran Ship Plating": 2,
+    "Zerg Carapace": 3,
+    "Zerg Flyer Caparace": 4,
+    "Protoss Armor": 5,
+    "Protoss Plating": 6,
+    "Terran Infantry Weapons": 7,
+    "Terran Vehicle Weapons": 8,
+    "Terran Ship Weapons": 9,
+    "Zerg Melee Attacks": 10,
+    "Zerg Missile Attacks": 11,
+    "Zerg Flyer Attacks": 12,
+    "Protoss Ground Weapons": 13,
+    "Protoss Air Weapons": 14,
+    "Protoss Plasma Shields": 15,
+    "U-238 Shells": 16,
+    "Ion Thrusters": 17,
+    "Burst Lasers (Unused)": 18,
+    "Titan Reactor (SV +50)": 19,
+    "Ocular Implants": 20,
+    "Moebius Reactor (Ghost +50)": 21,
+    "Apollo Reactor (Wraith +50)": 22,
+    "Colossus Reactor (BC +50)": 23,
+    "Ventral Sacs": 24,
+    "Antennae": 25,
+    "Pneumatized Carapace": 26,
+    "Metabolic Boost": 27,
+    "Adrenal Glands": 28,
+    "Muscular Augments": 29,
+    "Grooved Spines": 30,
+    "Gamete Meiosis (Queen +50)": 31,
+    "Metasynaptic Node (Defiler +50)": 32,
+    "Singularity Charge": 33,
+    "Leg Enhancements": 34,
+    "Scarab Damage": 35,
+    "Reaver Capacity": 36,
+    "Gravitic Drive": 37,
+    "Sensor Array": 38,
+    "Gravitic Boosters": 39,
+    "Khaydarin Amulet (HT +50)": 40,
+    "Apial Sensors": 41,
+    "Gravitic Thrusters": 42,
+    "Carrier Capacity": 43,
+    "Khaydarin Core (Arbiter +50)": 44,
+    "Unknown Upgrade45": 45,
+    "Unknown Upgrade46": 46,
+    "Argus Jewel (Corsair +50)": 47,
+    "Unknown Upgrade48": 48,
+    "Argus Talisman (DA +50)": 49,
+    "Unknown Upgrade50": 50,
+    "Caduceus Reactor (Medic +50)": 51,
+    "Chitinous Plating": 52,
+    "Anabolic Synthesis": 53,
+    "Charon Booster": 54,
+    "Unknown Upgrade55": 55,
+    "Unknown Upgrade56": 56,
+    "Unknown Upgrade57": 57,
+    "Unknown Upgrade58": 58,
+    "Unknown Upgrade59": 59,
+    "Unknown Upgrade60": 60,
+}
 
 
 def EncodeUpgrade(u):
