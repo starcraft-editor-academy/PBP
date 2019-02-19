@@ -8,7 +8,7 @@ import mapdata
 import unitloop
 import upgrade
 
-VERSION = 1.0
+VERSION = 1.01
 
 
 def onPluginStart():
@@ -41,7 +41,7 @@ def edit_map_title_and_description():
     title = strmap.GetString(title_strid)
     desc = strmap.GetString(desc_strid)
 
-    title = GetStringIndex(title + u2b(" \x06PBP %.1f" % VERSION))
+    title = GetStringIndex(title + u2b(" \x06PBP %.2f" % VERSION))
     desc = GetStringIndex(desc + u2b("\nEdited by EDAC https://cafe.naver.com/edac"))
     SPRP = i2b2(title) + i2b2(desc)
     chkt.setsection("SPRP", SPRP)
