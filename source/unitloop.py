@@ -47,6 +47,39 @@ def main():
         EUDEndIf()
 
 
+newCUnit = EUDArray(1700 * 336)
+epd2newCUnit = EPD(newCUnit) - EPD(0x59CCA8)
+
+
+def EUDLoopUnit2():
+    """EUDLoopUnit보다 약간? 빠릅니다. 유닛 리스트를 따라가지 않고
+    1700개 유닛을 도는 방식으로 작동합니다.
+    """
+    ptr, epd = EUDCreateVariables(2)
+    DoActions([
+        ptr.SetNumber(0x59CCA8),
+        epd.SetNumber(EPD(0x59CCA8)),
+    ])
+    if EUDLoopN()(1700):
+        # orderID가 0(Die)이면 없는 유닛으로 판단.
+        if EUDIf()(
+            MemoryXEPD(epd + (0x4D // 4), Exactly, 0, 0xFF00)
+        ):
+            global epd2newCUnit
+            DoActions([
+                SetMemoryEPD(epd + epd2newCUnit, SetTo, 0),
+            ])
+            EUDContinue()
+        EUDEndIf()
+        yield ptr, epd
+        EUDSetContinuePoint()
+        DoActions([
+            ptr.AddNumber(336),
+            epd.AddNumber(336 // 4),
+        ])
+    EUDEndLoopN()
+
+
 def LoopNewUnit(allowance=2):
     firstUnitPtr = EPD(0x628430)
     EUDCreateBlock('newunitloop', 'newlo')
@@ -55,9 +88,11 @@ def LoopNewUnit(allowance=2):
 
     ptr, epd = f_cunitepdread_epd(firstUnitPtr)
     if EUDWhile()(ptr >= 1):
-        tos = epd + 0xA5 // 4
-        if EUDIf()(MemoryXEPD(tos, AtLeast, 0x100, 0xFF00)):
-            DoActions(SetMemoryXEPD(tos, SetTo, 0, 0xFF00))
+        tos1 = f_bread_epd(epd + 0xA5 // 4, 1)
+        global epd2newCUnit
+        tos2 = epd + epd2newCUnit
+        if EUDIfNot()(MemoryEPD(tos2, Exactly, tos1)):
+            DoActions(SetMemoryEPD(tos2, SetTo, tos1))
             yield ptr, epd
         if EUDElse()():
             DoActions(tos0.AddNumber(1))
