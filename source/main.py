@@ -8,7 +8,8 @@ import mapdata
 import unitloop
 import upgrade
 
-VERSION = "1.02"
+with open("source/VERSION", "r") as f:
+    VERSION = f.read()
 
 
 def onPluginStart():
