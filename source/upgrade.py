@@ -14,7 +14,7 @@ def EnableSpiderMines(player):
 
 def detect_research():
     for p in mapdata.human:
-        RawTrigger(
+        Trigger(
             conditions=[
                 Research(p, "Spider Mines", Exactly, 1),
                 Memory(spider_mines + 4 * p, Exactly, 0),
