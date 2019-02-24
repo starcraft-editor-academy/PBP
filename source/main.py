@@ -8,7 +8,7 @@ import mapdata
 import unitloop
 import upgrade
 
-VERSION = 1.01
+VERSION = "1.02"
 
 
 def onPluginStart():
@@ -24,8 +24,7 @@ def beforeTriggerExec():
 def afterTriggerExec():
     unitloop.main()
     DoActions([
-        # [18] Burst Lasers (Unused)의 요구사항을 [17] Ion Thrusters와 같도록 변경
-        SetMemoryX(0x6558C0 + 18 * 2, SetTo, 227, 0xFFFF),
+        SetMemory(0x6561CC, SetTo, 9240590),
         # eudTurbo
         SetMemory(0x6509A0, SetTo, 0),
     ])
@@ -41,7 +40,11 @@ def edit_map_title_and_description():
     title = strmap.GetString(title_strid)
     desc = strmap.GetString(desc_strid)
 
-    title = GetStringIndex(title + u2b(" \x06PBP %.2f" % VERSION))
-    desc = GetStringIndex(desc + u2b("\nEdited by EDAC https://cafe.naver.com/edac"))
-    SPRP = i2b2(title) + i2b2(desc)
-    chkt.setsection("SPRP", SPRP)
+    try:
+        title = GetStringIndex(title + u2b(" \x06PBP %s" % VERSION))
+    except (TypeError):
+        pass
+    else:
+        desc = GetStringIndex(desc + u2b("\nEdited by EDAC https://cafe.naver.com/edac"))
+        SPRP = i2b2(title) + i2b2(desc)
+        chkt.setsection("SPRP", SPRP)

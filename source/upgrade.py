@@ -8,15 +8,20 @@ import mapdata
 spider_mines  = EUDArray(8)
 
 
+def EnableSpiderMines(player):
+    return CreateUnit(1, "Cave (Unused)", "nook", player)
+
+
 def detect_research():
     for p in mapdata.human:
         RawTrigger(
             conditions=[
-                Research(p, "Burst Lasers (Unused)", Exactly, 1),
+                Research(p, "Spider Mines", Exactly, 1),
                 Memory(spider_mines + 4 * p, Exactly, 0),
             ],
             actions=[
-                SetResearch(p, "Spider Mines", Add, 1),
+                EnableSpiderMines(p),
+                SetResearch(p, "Spider Mines", Subtract, 1),
                 SetMemory(spider_mines + 4 * p, Add, 1),
             ],
             preserved=False,
@@ -29,7 +34,7 @@ def detect_research():
         spider_mines_Lv2 << RawTrigger(
             nextptr=loopend,
             conditions=[
-                Research(p, "Burst Lasers (Unused)", Exactly, 2),
+                Research(p, "Spider Mines", Exactly, 1),
                 Memory(spider_mines + 4 * p, Exactly, 1),
             ],
             actions=[
