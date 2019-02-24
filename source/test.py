@@ -1,13 +1,37 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import re
+
 from eudplib import *
 
 from main import VERSION
 
 
 def onInit():
+    eddfnames = [
+        "main_CircuitBreakers.edd",
+        "main_FightingSpirit.edd",
+    ]
+    for eddfname in eddfnames:
+        with open(eddfname, "r+") as f:
+            content = f.read()
+            try:
+                output = re.sub(
+                    r"^(output:.*_PBP).*\.scx$",
+                    r"\g<1>%s.scx" % VERSION,
+                    content, flags=re.M
+                )
+            except (re.error):
+                pass
+            else:
+                f.seek(0)
+                f.write(output)
+                f.truncate()
     chkt = GetChkTokenized()
 
     SPRP = bytearray(chkt.getsection("SPRP"))
-    test_title = GetStringIndex("\x06PBP TEST %.2f" % VERSION)
+    test_title = GetStringIndex("\x06PBP TEST %s" % VERSION)
     SPRP[0:2] = i2b2(test_title)
     chkt.setsection("SPRP", SPRP)
 
