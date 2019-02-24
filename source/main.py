@@ -25,7 +25,6 @@ def beforeTriggerExec():
 def afterTriggerExec():
     unitloop.main()
     DoActions([
-        SetMemory(0x6561CC, SetTo, 9240590),
         # eudTurbo
         SetMemory(0x6509A0, SetTo, 0),
     ])
