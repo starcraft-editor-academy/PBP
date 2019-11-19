@@ -1,0 +1,8 @@
+[main]
+input:  ..\basemap\TEST.scx
+output: ..\PBP_TEST.scx
+
+[../source/main.py]
+[../source/test.py]
+[freeze]
+freeze: 0

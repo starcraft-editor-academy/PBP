@@ -17,5 +17,12 @@
   * Level 2: Provide each Vulture *three* Spider Mines to plant. Every Vulture gains one additional Spider Mines.
 * Fixed bug that prevent units from following any order until issue Stop, when move and attack orders are given in a short time.
 
+## How to Build
+
+* Put maps you want to apply patch to `basemap` folder.
+* Run `generate_eds.py` with Python3.
+* Run `make.ps1`. PBP patched maps will be generated in `output` folder.
+
 ## Links
+
 * StarCraft EDitor ACademy (EDAC): https://cafe.naver.com/edac

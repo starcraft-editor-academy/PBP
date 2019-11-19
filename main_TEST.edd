@@ -1,6 +1,0 @@
-[main]
-input:  basemap/(4)Fighting Spirit.scx
-output: (4)PBP_TEST.scx
-
-[source/test.py]
-[source/main.py]

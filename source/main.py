@@ -8,7 +8,7 @@ import mapdata
 import unitloop
 import upgrade
 
-with open("source/VERSION", "r") as f:
+with open("../source/VERSION", "r") as f:
     VERSION = f.read()
 
 
@@ -24,10 +24,7 @@ def beforeTriggerExec():
 
 def afterTriggerExec():
     unitloop.main()
-    DoActions([
-        # eudTurbo
-        SetMemory(0x6509A0, SetTo, 0),
-    ])
+    f_dwwrite(0x6509A0, 0)  # eudTurbo
 
 
 def edit_map_title_and_description():
@@ -45,6 +42,8 @@ def edit_map_title_and_description():
     except (TypeError):
         pass
     else:
-        desc = GetStringIndex(desc + u2b("\nEdited by EDAC https://cafe.naver.com/edac"))
+        desc = GetStringIndex(
+            desc + u2b("\nEdited by EDAC https://cafe.naver.com/edac")
+        )
         SPRP = i2b2(title) + i2b2(desc)
         chkt.setsection("SPRP", SPRP)

@@ -5,11 +5,11 @@ from eudplib import *
 
 import mapdata
 
-spider_mines  = EUDArray(8)
+spider_mines = EUDArray(8)
 
 
 def EnableSpiderMines(player):
-    return CreateUnit(1, "Cave (Unused)", "nook", player)
+    return CreateUnit(1, "Cave (Unused)", 1, player)
 
 
 def detect_research():
@@ -48,10 +48,7 @@ def detect_research():
         loopstart << NextTrigger()
         for ptr, epd in EUDLoopPlayerUnit(p):
             unit_type = epd + 0x64 // 4
-            if EUDIf()([
-                MemoryEPD(unit_type, Exactly,
-                          EncodeUnit("Terran Vulture")),
-            ]):
+            if EUDIf()(MemoryEPD(unit_type, Exactly, EncodeUnit("Terran Vulture"))):
                 spider_mine_count = epd + 0xC0 // 4
                 Trigger(
                     conditions=MemoryEPD(spider_mine_count, AtMost, 2),
@@ -59,8 +56,7 @@ def detect_research():
                 )
             EUDEndIf()
         RawTrigger(
-            nextptr=loopend,
-            actions=SetNextPtr(spider_mines_Lv2, loopend),
+            nextptr=loopend, actions=SetNextPtr(spider_mines_Lv2, loopend),
         )
         PopTriggerScope()
 

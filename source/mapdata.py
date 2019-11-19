@@ -24,14 +24,25 @@ TECx = bytearray(chkt.getsection("TECx"))
 PUPx = bytearray(chkt.getsection("PUPx"))
 PTEx = bytearray(chkt.getsection("PTEx"))
 UNIx = bytearray(chkt.getsection("UNIx"))
+MRGN = bytearray(chkt.getsection("MRGN"))
+
+
+def SetLocation1(x, y):
+    global MRGN
+    MRGN[0:4] = i2b4(x)
+    MRGN[4:8] = i2b4(y)
+    MRGN[8:12] = i2b4(x)
+    MRGN[12:16] = i2b4(y)
 
 
 def applyMapData():
+    SetLocation1(0, 1696)
     chkt.setsection("UPGx", UPGx)
     chkt.setsection("TECx", TECx)
     chkt.setsection("PUPx", PUPx)
     chkt.setsection("PTEx", PTEx)
     chkt.setsection("UNIx", UNIx)
+    chkt.setsection("MRGN", MRGN)
 
 
 def SetResearchSettings(research, data, value):
@@ -40,20 +51,20 @@ def SetResearchSettings(research, data, value):
         # data: (size, offset)
         "use default settings": (1, 0),
         # Unused 1 byte
-        "base mineral cost":    (2, 1 * 61 + 1),
-        "mineral cost factor":  (2, 3 * 61 + 1),
-        "base gas cost":        (2, 5 * 61 + 1),
-        "gas cost factor":      (2, 7 * 61 + 1),
-        "base time":            (2, 9 * 61 + 1),
-        "time factor":          (2, 11 * 61 + 1),
+        "base mineral cost": (2, 1 * 61 + 1),
+        "mineral cost factor": (2, 3 * 61 + 1),
+        "base gas cost": (2, 5 * 61 + 1),
+        "gas cost factor": (2, 7 * 61 + 1),
+        "base time": (2, 9 * 61 + 1),
+        "time factor": (2, 11 * 61 + 1),
     }
     TECx_data = {
         # data: (size, offset)
         "use default settings": (1, 0),
-        "mineral cost":         (2, 1 * 44),
-        "gas cost":             (2, 3 * 44),
-        "time":                 (2, 5 * 44),
-        "energy cost":          (2, 7 * 44),
+        "mineral cost": (2, 1 * 44),
+        "gas cost": (2, 3 * 44),
+        "time": (2, 5 * 44),
+        "energy cost": (2, 7 * 44),
     }
     try:
         research_id = upgrade.tech_dict[research]
@@ -74,7 +85,7 @@ def SetResearchSettings(research, data, value):
     section[research_id] = 0
     size, offset = research_data[data]
     index = offset + research_id * size
-    section[index:index + size] = i2bn(size)(value)
+    section[index : index + size] = i2bn(size)(value)
 
 
 def SetResearchRestrictions(research, data, value, player=False):
@@ -117,37 +128,45 @@ def SetResearchRestrictions(research, data, value, player=False):
     index = offset + research_id * size
     if player and use_player:
         index += research_data["length"] * player
-    section[index:index + size] = i2bn(size)(value)
+    section[index : index + size] = i2bn(size)(value)
 
 
-def SetUnitSettings(unit, data, value):
+def SetUnitSettings(
+    *, unit, hit_points, shield_points, armor_points, build_time, mineral_cost, gas_cost
+):
     global UNIx
+    print(f" - {unit}")
+    unit = EncodeUnit(unit)
+    UNIx[unit] = 0
+    hit_points *= 256
+    shield_points *= 256
     UNIx_data = {
         # data: (size, offset)
-        "use default settings": (1, 0),
-        "hit points":           (4, 1 * 228),
-        "shield points":        (2, 5 * 228),
-        "armor points":         (1, 7 * 228),
-        "build time":           (2, 8 * 228),
-        "mineral cost":         (2, 10 * 228),
-        "gas cost":             (2, 12 * 228),
-        "string number":        (2, 14 * 228),
+        # "use_default_settings": (1, 0),
+        "hit_points": (4, 1 * 228, hit_points),
+        "shield_points": (2, 5 * 228, shield_points),
+        "armor_points": (1, 7 * 228, armor_points),
+        "build_time": (2, 8 * 228, build_time),
+        "mineral_cost": (2, 10 * 228, mineral_cost),
+        "gas_cost": (2, 12 * 228, gas_cost),
+        # "string_number": (2, 14 * 228),
     }
-    UNIx_keys = UNIx_data.keys()
-    if data in ("hit points", "shield points"):
-        value = value * 256
-    unit = EncodeUnit(unit)
-    assert data in UNIx_data, "%s is not an Unit Settings." % (data)
-    UNIx[unit] = 0
-    size, offset = UNIx_data[data]
-    index = offset + unit * size
-    UNIx[index:index + size] = i2bn(size)(value)
+    for name, data in UNIx_data.items():
+        size, offset, value = data
+        index = offset + unit * size
+        orig_data = b2in(size)(UNIx[index : index + size])
+        UNIx[index : index + size] = i2bn(size)(value)
+        diff = "" if orig_data == value else "*"
+        if name in ("hit_points", "shield_points"):
+            orig_data, value = orig_data // 256, value // 256
+        print(f"{diff}{name}: {orig_data} -> {value}")
+
+
+def b2in(size):
+    _b2in = {1: b2i1, 2: b2i2, 4: b2i4}
+    return _b2in[size]
 
 
 def i2bn(size):
-    _i2bn = {
-        1: i2b1,
-        2: i2b2,
-        4: i2b4,
-    }
+    _i2bn = {1: i2b1, 2: i2b2, 4: i2b4}
     return _i2bn[size]
